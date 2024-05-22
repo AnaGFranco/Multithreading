@@ -61,17 +61,10 @@ func main() {
 
 	close(ch)
 
-	var fastestResponse, slowestResponse ApiResponse
+	var fastestResponse ApiResponse
 
 	select {
 	case fastestResponse = <-ch:
-	case <-time.After(time.Second):
-		fmt.Println("Timeout: No responses received within the time limit.")
-		return
-	}
-
-	select {
-	case slowestResponse = <-ch:
 	case <-time.After(time.Second):
 		fmt.Println("Timeout: No responses received within the time limit.")
 		return
@@ -83,9 +76,4 @@ func main() {
 		fmt.Printf("Fastest response from API %s (%v ms):\n%s\n", fastestResponse.API, fastestResponse.Time.Milliseconds(), string(fastestResponse.Data))
 	}
 
-	if slowestResponse.Err != nil {
-		fmt.Printf("Error in slowest response: %v\n", slowestResponse.Err)
-	} else {
-		fmt.Printf("Slowest response from API %s (%v ms):\n%s\n", slowestResponse.API, slowestResponse.Time.Milliseconds(), string(slowestResponse.Data))
-	}
 }
